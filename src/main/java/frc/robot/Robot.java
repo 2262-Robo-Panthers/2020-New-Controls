@@ -98,6 +98,10 @@ public class Robot extends TimedRobot {
 	double flywheelMinSpeed = 0;
     boolean logiPOVWasDown = false;
 	boolean logiPOVUpWasPressed = false;
+	final double lowGearRatio = 20.8;
+	final double turnRadius = 11 * Math.PI;
+	final double driveEncoderPerRotation = 2048;
+
 
 	/*
 	 * Left Joystick = Drive
@@ -199,7 +203,13 @@ public class Robot extends TimedRobot {
 
 			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
 			else ConveyorStop();
-
+		}
+		if (autoTimer.get() >= 5) {
+			double motorRotation = fr.getSensorCollection().getIntegratedSensorPosition() / driveEncoderPerRotation;
+			double gearboxRotation = motorRotation / lowGearRatio;
+			if (gearboxRotation < turnRadius/2) {
+				drive.arcadeDrive(0, 0.5);
+			}
 		}
 
 		// if (autoTimer.get() < 3.0) flywheelSetpoint = 0;
