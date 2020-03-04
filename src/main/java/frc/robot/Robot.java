@@ -241,10 +241,10 @@ public class Robot extends TimedRobot {
 			stopper.set(Value.kForward);
 		}
 		
-		if (xRemote.getTriggerAxis(Hand.kRight) > 0.1) {
-			move = xRemote.getTriggerAxis(Hand.kRight);
+		if (xRemote.getTriggerAxis(Hand.kLeft) > 0.1) {
+			move = xRemote.getTriggerAxis(Hand.kLeft);
 		}
-		else{move = -xRemote.getTriggerAxis(Hand.kLeft);}
+		else{move = -xRemote.getTriggerAxis(Hand.kRight);}
 		drive.arcadeDrive(move, -xRemote.getX(Hand.kLeft)/2);
 
 		final double flywheelGetVel = flywheel.getEncoder().getVelocity();
@@ -290,6 +290,7 @@ public class Robot extends TimedRobot {
 		}
 		if (LogiPOV == 90) intake.set(-0.5);
 		if (LogiPOV == 270) intake.set(0.5);
+		if (LogiPOV != 90 && LogiPOV != 270) {intake.set(0);}
 
 		if (LogiPOV == 180) {ConveyorReverse();}
 		else if (logiPOVwasDown) ConveyorStop();
@@ -297,11 +298,12 @@ public class Robot extends TimedRobot {
         if (LogiPOV == 0) {ConveyorSlow();}
         else if (logiPOVuPWasPressed) ConveyorStop();
 
+		SmartDashboard.putNumber("JoystickVal", LogiRemote.getY());
 
 		// if (xRemote.getXButtonPressed()) Neo550SpinCity = true;
 		// flywheel.set(flywheel.getEncoder().getPosition() <= 85 && Neo550SpinCity ? flywheelSpeed : 0);
 
-		if (LogiRemote.getTriggerPressed()) {
+		if (LogiRemote.getRawButton(1)) {
 			flywheelMinSpeed = 0.45;
 			minVel = 1600;
 		}
@@ -353,7 +355,7 @@ public class Robot extends TimedRobot {
 
 		//climb.set(XdPad == 0 && climbLimit.get() ? -0.5 : 0);
 
-		climb.set(Math.abs(xRemote.getY(Hand.kRight))); 
+		climb.set(LogiRemote.getY() > -0.1 ? 0 : LogiRemote.getY());
 		
 		// if (otherPhotoGate.get() == true) intakeWantConveyor = false;
 		// if (frontPhotoGate.get() == true) {
@@ -429,7 +431,6 @@ public class Robot extends TimedRobot {
 			stopper.set(Value.kReverse);
 		}
 		*/
-		climb.set(-xRemote.getY(Hand.kRight) * 0.7);
 
 		if (LogiRemote.getRawButtonPressed(3)) {rollerON = false;}
 
