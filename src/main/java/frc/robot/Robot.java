@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
 	final Timer autoTimer = new Timer();
 	final Timer initiationLineTimer = new Timer();
 	final Timer flywheelStarting = new Timer();
+	final Timer teleopTimer = new Timer();
 
 	final PIDController flywheelPID = new PIDController(1, 0, 0);
 
@@ -99,8 +100,9 @@ public class Robot extends TimedRobot {
 	boolean dPadPress;
 	boolean runDpadMethod;
 	double flywheelMinSpeed = 0;
-    boolean logiPOVwasDown = false;
-    boolean logiPOVuPWasPressed = false;
+    boolean logiPOVWasDown = false;
+	boolean logiPOVUpWasPressed = false;
+	boolean endgameCamEnabled = false;
 
 	/*
 	 * Left Joystick = Drive
@@ -189,23 +191,16 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 
-        flywheel.set(0.4);
-
 		if (initiationLineTimer.get() < 1.5) drive.arcadeDrive(0.5, 0);
-
 		else {
-			if (getTargetInView()) {
-				drive.arcadeDrive(-0.5, 0);
-			}
+			if (getTargetInView()) drive.arcadeDrive(-0.5, 0);
 			else if (targetInView) {
 				inPosition = true;
 				autoTimer.start();
 				autoTimer.reset();
 			}
 
-			if (inPosition = true) {
-				drive.arcadeDrive(0, 0);
-			}
+			if (inPosition) drive.arcadeDrive(0, 0);
 
 			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
 			else ConveyorStop();
@@ -231,6 +226,8 @@ public class Robot extends TimedRobot {
         ConveyorStop();
         flywheel.set(0);
 		flywheel.getEncoder().setPosition(0);
+		teleopTimer.start();
+		teleopTimer.reset();
 		flywheelSetpoint = 0;
 		flywheelSpin = false;
 		conveyorStarted = false;
@@ -240,6 +237,7 @@ public class Robot extends TimedRobot {
 		intakeWantConveyor = false;
 		intakingParty = false;
 		flywheelMinSpeed = 0;
+		endgameCamEnabled = false;
 	}
 
 	@Override
@@ -299,11 +297,11 @@ public class Robot extends TimedRobot {
 		if (LogiPOV == 270) intake.set(0.5);
 		if (LogiPOV != 90 && LogiPOV != 270) {intake.set(0);}
 
-		if (LogiPOV == 180) {ConveyorReverse();}
-		else if (logiPOVwasDown) ConveyorStop();
+		if (LogiPOV == 180) ConveyorReverse();
+		else if (logiPOVWasDown) ConveyorStop();
 
-        if (LogiPOV == 0) {ConveyorSlow();}
-        else if (logiPOVuPWasPressed) ConveyorStop();
+		if (LogiPOV == 0) ConveyorSlow();
+		else if (logiPOVUpWasPressed) ConveyorStop();
 
 		SmartDashboard.putNumber("JoystickVal", Logi.getY());
 
@@ -325,53 +323,52 @@ public class Robot extends TimedRobot {
 			flywheelMinSpeed = 1;
 			minVel = 4300;
 		}
-		/*
-		if (XdPad == 270) {
-			dPadPress = true;
-			flywheelMinSpeed = 0.45;
-			//flywheelWantToShoot = true;
-			// flywheelSetpoint = 1;
-            // should be 0.45
-			minVel = 1600;
-		}
-        if (XdPad == 90) {
-			dPadPress = true;
-			//flywheelWantToShoot = true;
-			flywheelMinSpeed = 1;
-			// flywheelSetpoint = 2;
-			minVel = 4500;
-		}
-		*/
-		/*
-		if (shooting == false && upperPhotoGate.get() == true) {
-			ConveyorStop();
-		}
-		*/
+
+		// if (XDPad == 270) {
+		// 	dPadPress = true;
+		// 	flywheelMinSpeed = 0.45;
+		// 	//flywheelWantToShoot = true;
+		// 	// flywheelSetpoint = 1;
+        //     // should be 0.45
+		// 	minVel = 1600;
+		// }
+        // if (XDPad == 90) {
+		// 	dPadPress = true;
+		// 	//flywheelWantToShoot = true;
+		// 	flywheelMinSpeed = 1;
+		// 	// flywheelSetpoint = 2;
+		// 	minVel = 4500;
+		// }
+
+
+		// if (!shooting && upperPhotoGate.get()) {
+		// 	ConveyorStop();
+		// }
+
 
 		flywheel.set(flywheelMinSpeed);
 
-		/*
-		if (flywheelWantToShoot == true) {
-			FlywheelAllowed();
-		}
-		}
-		else flywheel.set(0);
-		*/
+
+		// if (flywheelWantToShoot) {
+		// 	FlywheelAllowed();
+		// }
+		// else flywheel.set(0);
+
 
 		flywheelSpin = flywheel.get() != 0;
 
-		//climb.set(XdPad == 0 && climbLimit.get() ? -0.5 : 0);
+		// climb.set(XDPad == 0 && climbLimit.get() ? -0.5 : 0);
 
 		climb.set(Logi.getY() > -0.1 && Logi.getRawButton(7) ? 0 : Logi.getY());
 
-		// if (otherPhotoGate.get() == true) intakeWantConveyor = false;
-		// if (frontPhotoGate.get() == true) {
+		// if (otherPhotoGate.get()) intakeWantConveyor = false;
+		// if (frontPhotoGate.get()) {
 		// 	intakeWantConveyor = true;
 		// 	intakerConveyor.reset();
 		// 	intakerConveyor.start();
 		// 	BallCounterUp();
 		// }
-		// //if (intakerConveyor.get() >= 1) intakeWantConveyor = false;
+		// // if (intakerConveyor.get() >= 1) intakeWantConveyor = false;
 
 		// if (xRemote.getAButtonPressed() && flywheelGetVel > minVel && !shooting) {
 		// 	intakerConveyor.stop();
@@ -392,29 +389,27 @@ public class Robot extends TimedRobot {
 
 		// conveyorRequested = intakeWantConveyor || shooting;
 
-		// if (conveyorRequested== true) ConveyorStall();
-		// // if (conveyorRequested== true && intakeWantConveyor == false) ConveyorStart();
+		// if (conveyorRequested) ConveyorStall();
+		// // if (conveyorRequested && !intakeWantConveyor) ConveyorStart();
 		// else ConveyorStop();
 
 
 
-		// if (frontPhotoGate.get() == true) {
+		// if (frontPhotoGate.get()) {
 		// 	ConveyorIntake();
 		// 	intaking = true;
 		// }
-		// if (frontPhotoGate.get() == false && intaking == true && otherPhotoGate.get() == false) {
+		// else if (intaking && !otherPhotoGate.get()) {
 		// 	intaking = false;
 		// 	ConveyorGo();
 		// }
-		// if (otherPhotoGate.get() == true && intaking == false) {
-		// 	ConveyorStop();
-		// }
+		// if (otherPhotoGate.get() && !intaking) ConveyorStop();
 
 
 		if (frontPhotoGate.get()) {
 			intakingParty = true;
 		}
-		if (intakingParty == true) {
+		if (intakingParty) {
 			Intaking();
 		}
 
@@ -430,14 +425,8 @@ public class Robot extends TimedRobot {
 			shooting = false;
 			sawIt = false;
 		}
-		/*
-		if (shooting = false) {
-			stopper.set(Value.kForward);
-		}
-		else {
-			stopper.set(Value.kReverse);
-		}
-		*/
+
+		// stopper.set(shooting ? Value.kReverse : Value.kForward)
 
 		if (Logi.getRawButtonPressed(3)) {rollerON = false;}
 
@@ -448,8 +437,8 @@ public class Robot extends TimedRobot {
 		if (Logi.getRawButtonPressed(5)) {hood.set(-1);}
 		if (Logi.getRawButtonPressed(6)) {hood.set(1);}
 
-        logiPOVwasDown = XDPad == 180;
-        logiPOVuPWasPressed = LogiPOV == 0;
+        logiPOVWasDown = XDPad == 180;
+        logiPOVUpWasPressed = LogiPOV == 0;
 
 		SmartDashboard.putBoolean("RollerRunning", rollerON);
 		SmartDashboard.putBoolean("Climb Piston", climberPiston);
@@ -470,7 +459,7 @@ public class Robot extends TimedRobot {
 			intaking = false;
 			ConveyorGo();
 		}
-		if (otherPhotoGate.get() || frontPhotoGate.get() == false && !intaking) {
+		if (otherPhotoGate.get() || !frontPhotoGate.get() && !intaking) {
 			ConveyorStop();
 			intakingParty = false;
 		}
