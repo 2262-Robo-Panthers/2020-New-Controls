@@ -463,7 +463,7 @@ public class Robot extends TimedRobot {
 			intaking = false;
 			ConveyorGo();
 		}
-		if (otherPhotoGate.get() && !intaking) {
+		if (otherPhotoGate.get() || frontPhotoGate.get() == false && !intaking) {
 			ConveyorStop();
 			intakingParty = false;
 		}
