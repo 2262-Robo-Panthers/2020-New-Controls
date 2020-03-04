@@ -176,7 +176,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		gyro.reset();
 		stopper.set(Value.kForward);
 		targetInView = false;
 		initiationLineTimer.start();
@@ -202,12 +201,6 @@ public class Robot extends TimedRobot {
 			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
 			else ConveyorStop();
 
-			if (autoTimer.get() > 5 && gyro.getAngle() < 180) {
-				drive.arcadeDrive(0, 0.5);
-			}
-			if (autoTimer.get() > 5 && autoTimer.get() <= 7 && gyro.getAngle() >= 180) {
-				drive.arcadeDrive(0.5, 0.5);
-			}
 		}
 
 		// if (autoTimer.get() < 3.0) flywheelSetpoint = 0;
