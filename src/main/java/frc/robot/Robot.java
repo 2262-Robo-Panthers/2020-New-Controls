@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -62,6 +64,8 @@ public class Robot extends TimedRobot {
 	final DigitalInput lowerIntakeLimit = new DigitalInput(5);
 	final DigitalInput climbLimit = new DigitalInput(6);
 	final DigitalOutput lightRing = new DigitalOutput(9);
+
+	final Gyro gyro = new ADIS16448_IMU();
 
 	NetworkTableEntry targetInViewEntry;
 	NetworkTableEntry poseEntry;
@@ -142,7 +146,7 @@ public class Robot extends TimedRobot {
 
 		autoAlignPID.setSetpoint(0);
 
-		fr.getSensorCollection().getIntegratedSensorPosition();
+		//fr.getSensorCollection().getIntegratedSensorPosition();
 	}
 
 	public void robotPeriodic() {
@@ -173,6 +177,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
+		gyro.reset();
 		stopper.set(Value.kForward);
 		targetInView = false;
 		initiationLineTimer.start();
@@ -202,9 +207,14 @@ public class Robot extends TimedRobot {
 				drive.arcadeDrive(0, 0);
 			}
 
-			if (inPosition && autoTimer.get() < 10.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
+			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
 			else ConveyorStop();
+
+			if (autoTimer.get() >= 5 && gyro.getAngle() < 180) {
+				drive.arcadeDrive(0, 0.5);
+			}
 		}
+
 
 		// if (autoTimer.get() < 3.0) flywheelSetpoint = 0;
 		//flywheel.set(autoTimer.get() < 3.0 ? 0.4 : 0);
