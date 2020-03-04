@@ -355,7 +355,7 @@ public class Robot extends TimedRobot {
 
 		//climb.set(XdPad == 0 && climbLimit.get() ? -0.5 : 0);
 
-		climb.set(LogiRemote.getY() > -0.1 ? 0 : LogiRemote.getY());
+		climb.set(LogiRemote.getY() > -0.1 && LogiRemote.getRawButton(7) ? 0 : LogiRemote.getY());
 		
 		// if (otherPhotoGate.get() == true) intakeWantConveyor = false;
 		// if (frontPhotoGate.get() == true) {
