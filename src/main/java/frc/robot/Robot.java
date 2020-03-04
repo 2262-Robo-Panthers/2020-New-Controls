@@ -210,7 +210,7 @@ public class Robot extends TimedRobot {
 			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
 			else ConveyorStop();
 
-			if (autoTimer.get() >= 5 && gyro.getAngle() < 180) {
+			if (autoTimer.get() > 5 && gyro.getAngle() < 180) {
 				drive.arcadeDrive(0, 0.5);
 			}
 		}
