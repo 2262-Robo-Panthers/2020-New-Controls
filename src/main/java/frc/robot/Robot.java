@@ -233,7 +233,7 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 
 		final int LogiPOV = Logi.getPOV(0);
-		final int XdPad = XBoi.getPOV(0);
+		final int XDPad = XBoi.getPOV(0);
 
 		stopper.set(shooting ? Value.kForward : Value.kReverse);
 
@@ -247,7 +247,7 @@ public class Robot extends TimedRobot {
 		final Translation2d targetTranslation = getTargetPose().getTranslation();
 		final double targetAngle = -Math.atan2(targetTranslation.getY(), targetTranslation.getX());
 
-		if (XdPad == 0) autoAlignEnabled = !autoAlignEnabled;
+		if (XDPad == 0) autoAlignEnabled = !autoAlignEnabled;
 		if (autoAlignEnabled) {
 			fl.set(autoAlignPID.calculate(targetAngle));
 			fr.set(autoAlignPID.calculate(targetAngle));
@@ -435,7 +435,7 @@ public class Robot extends TimedRobot {
 		if (Logi.getRawButtonPressed(5)) {hood.set(-1);}
 		if (Logi.getRawButtonPressed(6)) {hood.set(1);}
 
-        logiPOVwasDown = XdPad == 180;
+        logiPOVwasDown = XDPad == 180;
         logiPOVuPWasPressed = LogiPOV == 0;
 
 		SmartDashboard.putBoolean("RollerRunning", rollerON);
