@@ -468,30 +468,9 @@ public class Robot extends TimedRobot {
 			intakingParty = false;
 		}
 	}
-	private void FlywheelAllowed() {
-		if (flywheelWantToShoot == true && upperPhotoGate.get() == false) {
-			flywheelCanShoot = true;
-		}
-		if (flywheelWantToShoot == false) {
-			flywheelCanShoot = false;
-		}
-		if (flywheelWantToShoot == true && upperPhotoGate.get() == true) {
-			ConveyorReverse();
-		}
-
-	}
 	private void ConveyorGo() {
 		conveyor1.set(-1);
 		conveyor2.set(1);
-	}
-	private void dPadPressed() {
-		if (dPadPress == true) {
-			ConveyorReverse();
-		}
-		if (dPadPress == false) {
-			ConveyorStop();
-			runDpadMethod = false;
-		}
 	}
 
 	private void ConveyorStop() {
