@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -70,7 +71,6 @@ public class Robot extends TimedRobot {
 	final Timer autoTimer = new Timer();
 	final Timer initiationLineTimer = new Timer();
 	final Timer flywheelStarting = new Timer();
-	final Timer teleopTimer = new Timer();
 
 	final PIDController flywheelPID = new PIDController(1, 0, 0);
 
@@ -98,7 +98,6 @@ public class Robot extends TimedRobot {
 	double flywheelMinSpeed = 0;
     boolean logiPOVWasDown = false;
 	boolean logiPOVUpWasPressed = false;
-	boolean endgameCamEnabled = false;
 
 	/*
 	 * Left Joystick = Drive
@@ -142,9 +141,10 @@ public class Robot extends TimedRobot {
 		targetInViewEntry = table.getEntry("isValid");
 		poseEntry = table.getEntry("targetPose");
 
+		CameraServer.getInstance().startAutomaticCapture();
+
 		autoAlignPID.setSetpoint(0);
 
-		//fr.getSensorCollection().getIntegratedSensorPosition();
 	}
 
 	public void robotPeriodic() {
@@ -202,9 +202,8 @@ public class Robot extends TimedRobot {
 
 		}
 
-
 		// if (autoTimer.get() < 3.0) flywheelSetpoint = 0;
-		//flywheel.set(autoTimer.get() < 3.0 ? 0.4 : 0);
+		// flywheel.set(autoTimer.get() < 3.0 ? 0.4 : 0);
 
 		SmartDashboard.putBoolean("Target In View", targetInView);
 		targetInView = getTargetInView();
@@ -215,8 +214,6 @@ public class Robot extends TimedRobot {
         ConveyorStop();
         flywheel.set(0);
 		flywheel.getEncoder().setPosition(0);
-		teleopTimer.start();
-		teleopTimer.reset();
 		flywheelSetpoint = 0;
 		flywheelSpin = false;
 		conveyorStarted = false;
@@ -226,7 +223,6 @@ public class Robot extends TimedRobot {
 		intakeWantConveyor = false;
 		intakingParty = false;
 		flywheelMinSpeed = 0;
-		endgameCamEnabled = false;
 	}
 
 	@Override
@@ -406,9 +402,7 @@ public class Robot extends TimedRobot {
 			ConveyorGo();
 			shooting = true;
 		}
-		if (shooting && upperPhotoGate.get()) {
-			sawIt = true;
-		}
+		if (shooting && upperPhotoGate.get()) sawIt = true;
 		if (!upperPhotoGate.get() && shooting && sawIt) {
 			ConveyorStop();
 			shooting = false;
@@ -417,14 +411,14 @@ public class Robot extends TimedRobot {
 
 		// stopper.set(shooting ? Value.kReverse : Value.kForward)
 
-		if (Logi.getRawButtonPressed(3)) {rollerON = false;}
+		if (Logi.getRawButtonPressed(3)) rollerON = false;
 
-		if (Logi.getRawButtonPressed(4)) {rollerON = true;}
+		if (Logi.getRawButtonPressed(4)) rollerON = true;
 
 		roller.set(rollerON ? -0.4 : 0);
 
-		if (Logi.getRawButtonPressed(5)) {hood.set(-1);}
-		if (Logi.getRawButtonPressed(6)) {hood.set(1);}
+		if (Logi.getRawButtonPressed(5)) hood.set(-1);
+		if (Logi.getRawButtonPressed(6)) hood.set(1);
 
         logiPOVWasDown = XDPad == 180;
         logiPOVUpWasPressed = LogiPOV == 0;
