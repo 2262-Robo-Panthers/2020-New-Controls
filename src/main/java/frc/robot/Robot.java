@@ -213,6 +213,9 @@ public class Robot extends TimedRobot {
 			if (autoTimer.get() > 5 && gyro.getAngle() < 180) {
 				drive.arcadeDrive(0, 0.5);
 			}
+			if (autoTimer.get() > 5 && autoTimer.get() <= 7 && gyro.getAngle() >= 180) {
+				drive.arcadeDrive(0.5, 0.5);
+			}
 		}
 
 
