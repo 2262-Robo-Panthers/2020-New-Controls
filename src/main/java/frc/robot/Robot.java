@@ -141,6 +141,8 @@ public class Robot extends TimedRobot {
 		poseEntry = table.getEntry("targetPose");
 
 		autoAlignPID.setSetpoint(0);
+
+		fr.getSensorCollection().getIntegratedSensorPosition();
 	}
 
 	public void robotPeriodic() {
