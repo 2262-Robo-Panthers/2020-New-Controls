@@ -184,23 +184,16 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 
-        flywheel.set(0.4);
-
 		if (initiationLineTimer.get() < 1.5) drive.arcadeDrive(0.5, 0);
-
 		else {
-			if (getTargetInView()) {
-				drive.arcadeDrive(-0.5, 0);
-			}
+			if (getTargetInView()) drive.arcadeDrive(-0.5, 0);
 			else if (targetInView) {
 				inPosition = true;
 				autoTimer.start();
 				autoTimer.reset();
 			}
 
-			if (inPosition = true) {
-				drive.arcadeDrive(0, 0);
-			}
+			if (inPosition) drive.arcadeDrive(0, 0);
 
 			if (inPosition && autoTimer.get() < 10.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
 			else ConveyorStop();
@@ -286,11 +279,11 @@ public class Robot extends TimedRobot {
 		if (LogiPOV == 270) intake.set(0.5);
 		if (LogiPOV != 90 && LogiPOV != 270) {intake.set(0);}
 
-		if (LogiPOV == 180) {ConveyorReverse();}
+		if (LogiPOV == 180) ConveyorReverse();
 		else if (logiPOVwasDown) ConveyorStop();
 
-        if (LogiPOV == 0) {ConveyorSlow();}
-        else if (logiPOVuPWasPressed) ConveyorStop();
+		if (LogiPOV == 0) ConveyorSlow();
+		else if (logiPOVuPWasPressed) ConveyorStop();
 
 		SmartDashboard.putNumber("JoystickVal", Logi.getY());
 
@@ -330,7 +323,7 @@ public class Robot extends TimedRobot {
 		}
 		*/
 		/*
-		if (shooting == false && upperPhotoGate.get() == true) {
+		if (!shooting && upperPhotoGate.get()) {
 			ConveyorStop();
 		}
 		*/
@@ -338,7 +331,7 @@ public class Robot extends TimedRobot {
 		flywheel.set(flywheelMinSpeed);
 
 		/*
-		if (flywheelWantToShoot == true) {
+		if (flywheelWantToShoot) {
 			FlywheelAllowed();
 		}
 		}
@@ -351,8 +344,8 @@ public class Robot extends TimedRobot {
 
 		climb.set(Logi.getY() > -0.1 && Logi.getRawButton(7) ? 0 : Logi.getY());
 
-		// if (otherPhotoGate.get() == true) intakeWantConveyor = false;
-		// if (frontPhotoGate.get() == true) {
+		// if (otherPhotoGate.get()) intakeWantConveyor = false;
+		// if (frontPhotoGate.get()) {
 		// 	intakeWantConveyor = true;
 		// 	intakerConveyor.reset();
 		// 	intakerConveyor.start();
@@ -379,21 +372,21 @@ public class Robot extends TimedRobot {
 
 		// conveyorRequested = intakeWantConveyor || shooting;
 
-		// if (conveyorRequested== true) ConveyorStall();
-		// // if (conveyorRequested== true && intakeWantConveyor == false) ConveyorStart();
+		// if (conveyorRequested) ConveyorStall();
+		// // if (conveyorRequested && !intakeWantConveyor) ConveyorStart();
 		// else ConveyorStop();
 
 
 
-		// if (frontPhotoGate.get() == true) {
+		// if (frontPhotoGate.get()) {
 		// 	ConveyorIntake();
 		// 	intaking = true;
 		// }
-		// if (frontPhotoGate.get() == false && intaking == true && otherPhotoGate.get() == false) {
+		// if (!frontPhotoGate.get() && intaking && !otherPhotoGate.get()) {
 		// 	intaking = false;
 		// 	ConveyorGo();
 		// }
-		// if (otherPhotoGate.get() == true && intaking == false) {
+		// if (otherPhotoGate.get() && !intaking) {
 		// 	ConveyorStop();
 		// }
 
@@ -401,7 +394,7 @@ public class Robot extends TimedRobot {
 		if (frontPhotoGate.get()) {
 			intakingParty = true;
 		}
-		if (intakingParty == true) {
+		if (intakingParty) {
 			Intaking();
 		}
 
@@ -457,7 +450,7 @@ public class Robot extends TimedRobot {
 			intaking = false;
 			ConveyorGo();
 		}
-		if (otherPhotoGate.get() || frontPhotoGate.get() == false && !intaking) {
+		if (otherPhotoGate.get() || !frontPhotoGate.get() && !intaking) {
 			ConveyorStop();
 			intakingParty = false;
 		}
