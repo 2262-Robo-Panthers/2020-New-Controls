@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -147,8 +146,6 @@ public class Robot extends TimedRobot {
 		final NetworkTable table = inst.getTable("chameleon-vision").getSubTable("Microsoft LifeCam HD-3000");
 		targetInViewEntry = table.getEntry("isValid");
 		poseEntry = table.getEntry("targetPose");
-
-		CameraServer.getInstance().startAutomaticCapture();
 
 		autoAlignPID.setSetpoint(0);
 
