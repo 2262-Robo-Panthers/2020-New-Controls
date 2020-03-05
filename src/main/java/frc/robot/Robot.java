@@ -209,13 +209,14 @@ public class Robot extends TimedRobot {
 		}
 		if (autoTimer.get() > 11) {
 			drive.arcadeDrive(0, 0);
-			stopper.set(Value.kReverse);
+			stopper.set(Value.kForward);
 		}
 
 		// if (autoTimer.get() < 3.0) flywheelSetpoint = 0;
 		// flywheel.set(autoTimer.get() < 3.0 ? 0.4 : 0);
 
 		SmartDashboard.putBoolean("Target In View", targetInView);
+		SmartDashboard.putNumber("Auto Timer", autoTimer.get());
 		targetInView = getTargetInView();
 	}
 
@@ -237,11 +238,12 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		hood.set(0);
 
 		final int LogiPOV = Logi.getPOV(0);
 		final int XDPad = XBoi.getPOV(0);
 
-		stopper.set(shooting ? Value.kForward : Value.kReverse);
+		//stopper.set(shooting ? Value.kForward : Value.kReverse);
 
 		drive.arcadeDrive(XBoi.getTriggerAxis(Hand.kLeft) - XBoi.getTriggerAxis(Hand.kRight), -XBoi.getX(Hand.kLeft)/2);
 
@@ -415,9 +417,10 @@ public class Robot extends TimedRobot {
 		if (Logi.getRawButtonPressed(4)) rollerON = true;
 
 		roller.set(rollerON ? -0.4 : 0);
-
+		/*
 		if (Logi.getRawButtonPressed(5)) hood.set(-1);
 		if (Logi.getRawButtonPressed(6)) hood.set(1);
+		*/
 
         logiPOVWasDown = XDPad == 180;
         logiPOVUpWasPressed = LogiPOV == 0;
@@ -441,7 +444,7 @@ public class Robot extends TimedRobot {
 			intaking = false;
 			ConveyorGo();
 		}
-		if (otherPhotoGate.get() || !frontPhotoGate.get() && !intaking) {
+		if (otherPhotoGate.get() && !intaking) {
 			ConveyorStop();
 			intakingParty = false;
 		}
