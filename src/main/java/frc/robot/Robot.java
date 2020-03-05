@@ -208,16 +208,16 @@ public class Robot extends TimedRobot {
 			else ConveyorStop();
 		}
 		if (autoTimer.get() >= 7 && autoTimer.get() < 9) {
+			double distanceTraveled = gearboxRotation * distancePerWheelRotation;
+			if (distanceTraveled < 200) {
+				drive.arcadeDrive(0.75, 0);
+			}
+		}
+		if (autoTimer.get() > 9 && autoTimer.get() <= 11) {
 			motorRotation = fr.getSensorCollection().getIntegratedSensorPosition() / driveEncoderPerRotation;
 			gearboxRotation = motorRotation / lowGearRatio;
 			if (gearboxRotation < turnRadius/2) {
 				drive.arcadeDrive(0, 0.6);
-			}
-		}
-		if (autoTimer.get() > 9 && autoTimer.get() <= 11) {
-			double distanceTraveled = gearboxRotation * distancePerWheelRotation;
-			if (distanceTraveled < 200) {
-				drive.arcadeDrive(-0.75, 0);
 			}
 		}
 		if (autoTimer.get() > 11) {
