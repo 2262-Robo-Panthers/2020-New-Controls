@@ -208,7 +208,7 @@ public class Robot extends TimedRobot {
 			else ConveyorStop();
 		}
 		if (autoTimer.get() >= 7 && autoTimer.get() < 9) {
-			double motorRotation = fr.getSensorCollection().getIntegratedSensorPosition() / driveEncoderPerRotation;
+			motorRotation = fr.getSensorCollection().getIntegratedSensorPosition() / driveEncoderPerRotation;
 			gearboxRotation = motorRotation / lowGearRatio;
 			if (gearboxRotation < turnRadius/2) {
 				drive.arcadeDrive(0, 0.6);
