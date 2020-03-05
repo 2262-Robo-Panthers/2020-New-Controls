@@ -349,17 +349,13 @@ public class Robot extends TimedRobot {
 		// }
 
 
-		// if (!shooting && upperPhotoGate.get()) {
-		// 	ConveyorStop();
-		// }
+		// if (!shooting && upperPhotoGate.get()) ConveyorStop();
 
 
 		flywheel.set(flywheelMinSpeed);
 
 
-		// if (flywheelWantToShoot) {
-		// 	FlywheelAllowed();
-		// }
+		// if (flywheelWantToShoot) FlywheelAllowed();
 		// else flywheel.set(0);
 
 
@@ -414,12 +410,8 @@ public class Robot extends TimedRobot {
 		// if (otherPhotoGate.get() && !intaking) ConveyorStop();
 
 
-		if (frontPhotoGate.get()) {
-			intakingParty = true;
-		}
-		if (intakingParty) {
-			Intaking();
-		}
+		if (frontPhotoGate.get()) intakingParty = true;
+		if (intakingParty) Intaking();
 
 		if (flywheel.getEncoder().getVelocity() > 1800 && XBoi.getAButtonPressed()) {
 			ConveyorGo();
