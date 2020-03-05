@@ -181,18 +181,13 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		stopper.set(Value.kForward);
 		targetInView = false;
-		initiationLineTimer.start();
-		initiationLineTimer.reset();
         // flywheelSetpoint = 1;
         flywheel.set(0.4);
 	}
 
 	@Override
 	public void autonomousPeriodic() {
-
-		if (initiationLineTimer.get() < 1.5) drive.arcadeDrive(0.5, 0);
-		else {
-			if (getTargetInView()) drive.arcadeDrive(-0.5, 0);
+		if (getTargetInView()) drive.arcadeDrive(-0.5, 0);
 			else if (targetInView) {
 				inPosition = true;
 				autoTimer.start();
@@ -203,19 +198,14 @@ public class Robot extends TimedRobot {
 
 			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
 			else ConveyorStop();
-		}
 		if (autoTimer.get() >= 7 && autoTimer.get() < 9) {
 			double distanceTraveled = gearboxRotation * distancePerWheelRotation;
-			if (distanceTraveled < 200) {
-				drive.arcadeDrive(0.75, 0);
-			}
+			if (distanceTraveled < 200) drive.arcadeDrive(0.75, 0);
 		}
 		if (autoTimer.get() > 9 && autoTimer.get() <= 11) {
 			motorRotation = fr.getSensorCollection().getIntegratedSensorPosition() / driveEncoderPerRotation;
 			gearboxRotation = motorRotation / lowGearRatio;
-			if (gearboxRotation < turnRadius/2) {
-				drive.arcadeDrive(0, 0.6);
-			}
+			if (gearboxRotation < turnRadius/2) drive.arcadeDrive(0, 0.6);
 		}
 		if (autoTimer.get() > 11) {
 			drive.arcadeDrive(0, 0);
@@ -253,10 +243,7 @@ public class Robot extends TimedRobot {
 
 		stopper.set(shooting ? Value.kForward : Value.kReverse);
 
-		if (XBoi.getTriggerAxis(Hand.kLeft) > 0.1) move = XBoi.getTriggerAxis(Hand.kLeft);
-		else move = -XBoi.getTriggerAxis(Hand.kRight);
-
-		drive.arcadeDrive(move, -XBoi.getX(Hand.kLeft)/2);
+		drive.arcadeDrive(XBoi.getTriggerAxis(Hand.kLeft) - XBoi.getTriggerAxis(Hand.kRight), -XBoi.getX(Hand.kLeft)/2);
 
 		final double flywheelGetVel = flywheel.getEncoder().getVelocity();
 
