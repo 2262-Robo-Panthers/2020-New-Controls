@@ -201,12 +201,12 @@ public class Robot extends TimedRobot {
 			if (inPosition) {drive.arcadeDrive(0, 0);
 				autoTimer.start();}
 
-			if (inPosition && autoTimer.get() < 3.0 && flywheel.getEncoder().getVelocity() > 1800){
+			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800){
 				ConveyorGo();
 				//fr.getSensorCollection().setIntegratedSensorPosition(0, 0);
 			}
 			else ConveyorStop();
-			/*
+			
 		if (autoTimer.get() >= 3 && autoTimer.get() < 6) {
 			ConveyorStop();
 			flywheel.set(0);
@@ -214,6 +214,7 @@ public class Robot extends TimedRobot {
 			gearboxRotation = motorRotation / lowGearRatio;
 			if (gearboxRotation < turnRadius/5) drive.arcadeDrive(0, -0.6);
 		}
+		/*
 		if (autoTimer.get() > 6 && autoTimer.get() <= 11) {
 			distanceTraveled = gearboxRotation * distancePerWheelRotation;
 			if (distanceTraveled < 100) drive.arcadeDrive(-0.75, 0);
