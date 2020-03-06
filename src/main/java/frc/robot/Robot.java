@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
 	final Timer autoTimer = new Timer();
 	final Timer initiationLineTimer = new Timer();
 	final Timer flywheelStarting = new Timer();
+	final Timer endShootingTimer = new Timer();
 
 	final PIDController flywheelPID = new PIDController(1, 0, 0);
 
@@ -423,9 +424,11 @@ public class Robot extends TimedRobot {
 		if (shooting && upperPhotoGate.get()) sawIt = true;
 		if (!upperPhotoGate.get() && shooting && sawIt) {
 			ConveyorStop();
-			shooting = false;
+			endShootingTimer.start();
+			endShootingTimer.reset();
 			sawIt = false;
 		}
+		if (shooting && endShootingTimer.get() > 2.0) shooting = false;
 
 		// stopper.set(shooting ? Value.kReverse : Value.kForward)
 
