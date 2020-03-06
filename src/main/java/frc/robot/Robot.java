@@ -333,6 +333,10 @@ public class Robot extends TimedRobot {
 			minVel = 4300;
 		}
 
+		if (Logi.getRawButtonPressed(12)) {
+			flywheelMinSpeed = 0.2;
+		}
+
 		// if (XDPad == 270) {
 		// 	dPadPress = true;
 		// 	flywheelMinSpeed = 0.45;
