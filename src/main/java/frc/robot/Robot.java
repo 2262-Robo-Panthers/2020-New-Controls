@@ -99,10 +99,11 @@ public class Robot extends TimedRobot {
 	boolean logiPOVUpWasPressed = false;
 	double motorRotation;
 	double gearboxRotation;
-	final double lowGearRatio = 20.8;
-	final double turnRadius = 11 * Math.PI;
-	final int driveEncoderPerRotation = 2048;
-	final int distancePerWheelRotation = 6;
+	double distanceTraveled;
+	static final double lowGearRatio = 20.8;
+	static final double turnRadius = 2 * 11 * Math.PI;
+	static final double driveEncoderPerRotation = 2048;
+	static final double distancePerWheelRotation = 6 * Math.PI;
 
 
 	/*
@@ -182,7 +183,10 @@ public class Robot extends TimedRobot {
 		stopper.set(Value.kForward);
 		targetInView = false;
         // flywheelSetpoint = 1;
-        flywheel.set(0.4);
+		flywheel.set(0.4);
+		//fr.getSensorCollection().setIntegratedSensorPosition(0, 0);
+		autoTimer.reset();
+		inPosition = false;
 	}
 
 	@Override
@@ -194,29 +198,40 @@ public class Robot extends TimedRobot {
 				autoTimer.reset();
 			}
 
-			if (inPosition) drive.arcadeDrive(0, 0);
+			if (inPosition) {drive.arcadeDrive(0, 0);
+				autoTimer.start();}
 
-			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800) ConveyorGo();
+			if (inPosition && autoTimer.get() < 3.0 && flywheel.getEncoder().getVelocity() > 1800){
+				ConveyorGo();
+				//fr.getSensorCollection().setIntegratedSensorPosition(0, 0);
+			}
 			else ConveyorStop();
-		if (autoTimer.get() >= 7 && autoTimer.get() < 9) {
-			double distanceTraveled = gearboxRotation * distancePerWheelRotation;
-			if (distanceTraveled < 200) drive.arcadeDrive(0.75, 0);
-		}
-		if (autoTimer.get() > 9 && autoTimer.get() <= 11) {
+			/*
+		if (autoTimer.get() >= 3 && autoTimer.get() < 6) {
+			ConveyorStop();
+			flywheel.set(0);
 			motorRotation = fr.getSensorCollection().getIntegratedSensorPosition() / driveEncoderPerRotation;
 			gearboxRotation = motorRotation / lowGearRatio;
-			if (gearboxRotation < turnRadius/2) drive.arcadeDrive(0, 0.6);
+			if (gearboxRotation < turnRadius/5) drive.arcadeDrive(0, -0.6);
+		}
+		if (autoTimer.get() > 6 && autoTimer.get() <= 11) {
+			distanceTraveled = gearboxRotation * distancePerWheelRotation;
+			if (distanceTraveled < 100) drive.arcadeDrive(-0.75, 0);
 		}
 		if (autoTimer.get() > 11) {
 			drive.arcadeDrive(0, 0);
 			stopper.set(Value.kForward);
-		}
+			*/
+		//}
 
 		// if (autoTimer.get() < 3.0) flywheelSetpoint = 0;
 		// flywheel.set(autoTimer.get() < 3.0 ? 0.4 : 0);
 
 		SmartDashboard.putBoolean("Target In View", targetInView);
 		SmartDashboard.putNumber("Auto Timer", autoTimer.get());
+		SmartDashboard.putNumber("FR Encoder", fr.getSensorCollection().getIntegratedSensorPosition());
+		SmartDashboard.putNumber("gearbox Rotations", gearboxRotation);
+		SmartDashboard.putNumber("Distance Moved", distanceTraveled);
 		targetInView = getTargetInView();
 	}
 
@@ -349,7 +364,7 @@ public class Robot extends TimedRobot {
 
 		// climb.set(XDPad == 0 && climbLimit.get() ? -0.5 : 0);
 
-		climb.set(Logi.getY() > -0.1 && Logi.getRawButton(7) ? 0 : Logi.getY());
+		climb.set(Logi.getY() > -0.1 && Logi.getRawButton(7) && !climbLimit.get() ? 0 : Logi.getY());
 
 		// if (otherPhotoGate.get()) intakeWantConveyor = false;
 		// if (frontPhotoGate.get()) {
@@ -465,7 +480,7 @@ public class Robot extends TimedRobot {
 
 	private void ConveyorIntake() {
 		conveyor1.set(-1);
-		conveyor2.set(-0.4);
+		conveyor2.set(-0.6);
     }
 
     private void ConveyorSlow() {
