@@ -430,8 +430,6 @@ public class Robot extends TimedRobot {
 
 		stopper.set(shooting ? Value.kForward : Value.kReverse);
 
-		// stopper.set(shooting ? Value.kReverse : Value.kForward)
-
 		if (Logi.getRawButtonPressed(3)) rollerON = false;
 
 		if (Logi.getRawButtonPressed(4)) rollerON = true;
