@@ -259,8 +259,6 @@ public class Robot extends TimedRobot {
 		final int LogiPOV = Logi.getPOV(0);
 		final int XDPad = XBoi.getPOV(0);
 
-		//stopper.set(shooting ? Value.kForward : Value.kReverse);
-
 		drive.arcadeDrive(XBoi.getTriggerAxis(Hand.kLeft) - XBoi.getTriggerAxis(Hand.kRight), -XBoi.getX(Hand.kLeft)/2);
 
 		final double flywheelGetVel = flywheel.getEncoder().getVelocity();
@@ -429,6 +427,8 @@ public class Robot extends TimedRobot {
 			sawIt = false;
 		}
 		if (shooting && endShootingTimer.get() > 2.0) shooting = false;
+
+		stopper.set(shooting ? Value.kForward : Value.kReverse);
 
 		// stopper.set(shooting ? Value.kReverse : Value.kForward)
 
