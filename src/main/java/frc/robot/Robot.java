@@ -366,7 +366,7 @@ public class Robot extends TimedRobot {
 
 		// climb.set(XDPad == 0 && climbLimit.get() ? -0.5 : 0);
 
-		climb.set(Logi.getY() < -0.1 && Logi.getRawButton(7) && !climbLimit.get() || XBoi.getY(Hand.kRight) < -0.1 ? 0 : Logi.getY());
+		climb.set(Logi.getY() < -0.1 && Logi.getRawButton(7) && !climbLimit.get() || XBoi.getY(Hand.kRight) < -0.1 ? 0 : -0.5);
 
 		// if (otherPhotoGate.get()) intakeWantConveyor = false;
 		// if (frontPhotoGate.get()) {
