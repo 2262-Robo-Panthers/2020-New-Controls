@@ -1,4 +1,4 @@
-package frc.robot;
+ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -70,7 +70,6 @@ public class Robot extends TimedRobot {
 	final Timer autoTimer = new Timer();
 	final Timer initiationLineTimer = new Timer();
 	final Timer flywheelStarting = new Timer();
-	final Timer endShootingTimer = new Timer();
 
 	final PIDController flywheelPID = new PIDController(1, 0, 0);
 
@@ -259,6 +258,8 @@ public class Robot extends TimedRobot {
 		final int LogiPOV = Logi.getPOV(0);
 		final int XDPad = XBoi.getPOV(0);
 
+		//stopper.set(shooting ? Value.kForward : Value.kReverse);
+
 		drive.arcadeDrive(XBoi.getTriggerAxis(Hand.kLeft) - XBoi.getTriggerAxis(Hand.kRight), -XBoi.getX(Hand.kLeft)/2);
 
 		final double flywheelGetVel = flywheel.getEncoder().getVelocity();
@@ -364,8 +365,8 @@ public class Robot extends TimedRobot {
 		flywheelSpin = flywheel.get() != 0;
 
 		// climb.set(XDPad == 0 && climbLimit.get() ? -0.5 : 0);
-
-		climb.set(Logi.getY() > -0.1 && Logi.getRawButton(7) && !climbLimit.get() ? 0 : Logi.getY());
+		if (!Logi.getRawButton(7)) climb.set(0);
+		else climb.set(Logi.getY() > -0.1 && Logi.getRawButton(7) && !climbLimit.get() ? 0 : Logi.getY());
 
 		// if (otherPhotoGate.get()) intakeWantConveyor = false;
 		// if (frontPhotoGate.get()) {
@@ -422,13 +423,11 @@ public class Robot extends TimedRobot {
 		if (shooting && upperPhotoGate.get()) sawIt = true;
 		if (!upperPhotoGate.get() && shooting && sawIt) {
 			ConveyorStop();
-			endShootingTimer.start();
-			endShootingTimer.reset();
+			shooting = false;
 			sawIt = false;
 		}
-		if (shooting && endShootingTimer.get() > 2.0) shooting = false;
 
-		stopper.set(shooting ? Value.kForward : Value.kReverse);
+		// stopper.set(shooting ? Value.kReverse : Value.kForward)
 
 		if (Logi.getRawButtonPressed(3)) rollerON = false;
 
@@ -446,6 +445,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("RollerRunning", rollerON);
 		SmartDashboard.putBoolean("Climb Piston", climberPiston);
 		SmartDashboard.putNumber("Angle To Target", targetAngle);
+		SmartDashboard.putBoolean("Upper PhotoGatrak", upperPhotoGate.get());
 	}
 
 	@Override
