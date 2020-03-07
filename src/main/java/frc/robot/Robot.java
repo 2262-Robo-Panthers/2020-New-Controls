@@ -222,8 +222,7 @@ public class Robot extends TimedRobot {
 		if (autoTimer.get() > 11) {
 			drive.arcadeDrive(0, 0);
 			stopper.set(Value.kForward);
-			*/
-		//}
+		}
 
 		// if (autoTimer.get() < 3.0) flywheelSetpoint = 0;
 		// flywheel.set(autoTimer.get() < 3.0 ? 0.4 : 0);
