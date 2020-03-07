@@ -273,7 +273,7 @@ public class Robot extends TimedRobot {
 			fr.set(autoAlignPID.calculate(targetAngle));
 		}
 
-		if (flywheel.getEncoder().getVelocity() < 1300 || flywheel.get() == 0) shooting = false;
+		if (flywheel.get() == 0) shooting = false;
 
 		XBoi.setRumble(RumbleType.kLeftRumble, flywheelGetVel / 4700);
 		XBoi.setRumble(RumbleType.kRightRumble, flywheelGetVel / 4700);
@@ -427,9 +427,7 @@ public class Robot extends TimedRobot {
 			sawIt = false;
 		}
 
-		// stopper.set(shooting ? Value.kReverse : Value.kForward)
-
-
+		stopper.set(shooting ? Value.kForward : Value.kReverse);
 
 		if (Logi.getRawButtonPressed(5)) rollerON = false;
 
@@ -437,8 +435,8 @@ public class Robot extends TimedRobot {
 
 		roller.set(rollerON ? -0.4 : 0);
 
-		if (Logi.getRawButtonPressed(3)) stopper.set(Value.kForward);
-		if (Logi.getRawButtonPressed(4)) stopper.set(Value.kReverse);
+		//if (Logi.getRawButtonPressed(3)) stopper.set(Value.kForward);
+		//if (Logi.getRawButtonPressed(4)) stopper.set(Value.kReverse);
 
 		/*
 		if (Logi.getRawButtonPressed(5)) hood.set(-1);
