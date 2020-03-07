@@ -192,21 +192,22 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		if (getTargetInView()) drive.arcadeDrive(-0.5, 0);
-			else if (targetInView) {
-				inPosition = true;
-				autoTimer.start();
-				autoTimer.reset();
-			}
+		else if (targetInView) {
+			inPosition = true;
+			autoTimer.start();
+			autoTimer.reset();
+		}
 
-			if (inPosition) {drive.arcadeDrive(0, 0);
-				autoTimer.start();}
+		if (inPosition) {
+			drive.arcadeDrive(0, 0);
+			autoTimer.start();
+		}
+		if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800){
+			ConveyorGo();
+			//fr.getSensorCollection().setIntegratedSensorPosition(0, 0);
+		}
+		else ConveyorStop();
 
-			if (inPosition && autoTimer.get() < 5.0 && flywheel.getEncoder().getVelocity() > 1800){
-				ConveyorGo();
-				//fr.getSensorCollection().setIntegratedSensorPosition(0, 0);
-			}
-			else ConveyorStop();
-			
 		if (autoTimer.get() >= 3 && autoTimer.get() < 6) {
 			ConveyorStop();
 			flywheel.set(0);
@@ -365,7 +366,7 @@ public class Robot extends TimedRobot {
 
 		// climb.set(XDPad == 0 && climbLimit.get() ? -0.5 : 0);
 
-		climb.set(Logi.getY() > -0.1 && Logi.getRawButton(7) && !climbLimit.get() ? 0 : Logi.getY());
+		climb.set(Logi.getY() < -0.1 && Logi.getRawButton(7) && !climbLimit.get() ? 0 : Logi.getY());
 
 		// if (otherPhotoGate.get()) intakeWantConveyor = false;
 		// if (frontPhotoGate.get()) {
