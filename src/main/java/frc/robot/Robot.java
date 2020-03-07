@@ -416,7 +416,7 @@ public class Robot extends TimedRobot {
 		if (frontPhotoGate.get()) intakingParty = true;
 		if (intakingParty) Intaking();
 
-		if (flywheel.getEncoder().getVelocity() > 1800 && XBoi.getAButtonPressed()) {
+		if (flywheel.getEncoder().getVelocity() > 1000 && XBoi.getAButtonPressed()) {
 			ConveyorGo();
 			shooting = true;
 		}
