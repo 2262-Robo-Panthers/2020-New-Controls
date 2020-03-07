@@ -1,4 +1,4 @@
-package frc.robot;
+ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -215,7 +215,6 @@ public class Robot extends TimedRobot {
 			gearboxRotation = motorRotation / lowGearRatio;
 			if (gearboxRotation < turnRadius/5) drive.arcadeDrive(0, -0.6);
 		}
-		/*
 		if (autoTimer.get() > 6 && autoTimer.get() <= 11) {
 			distanceTraveled = gearboxRotation * distancePerWheelRotation;
 			if (distanceTraveled < 100) drive.arcadeDrive(-0.75, 0);
@@ -335,6 +334,8 @@ public class Robot extends TimedRobot {
 			minVel = 4300;
 		}
 
+		if (Logi.getRawButtonPressed(12)) flywheelMinSpeed = 0.2;
+
 		// if (XDPad == 270) {
 		// 	dPadPress = true;
 		// 	flywheelMinSpeed = 0.45;
@@ -366,7 +367,8 @@ public class Robot extends TimedRobot {
 
 		// climb.set(XDPad == 0 && climbLimit.get() ? -0.5 : 0);
 
-		climb.set(Logi.getY() < -0.1 && Logi.getRawButton(7) && !climbLimit.get() ? 0 : Logi.getY());
+		if (!Logi.getRawButton(7)) climb.set(0);
+		else climb.set(Logi.getY() < -0.1 && Logi.getRawButton(7) && !climbLimit.get() ? 0 : Logi.getY());
 
 		// if (otherPhotoGate.get()) intakeWantConveyor = false;
 		// if (frontPhotoGate.get()) {
@@ -445,6 +447,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("RollerRunning", rollerON);
 		SmartDashboard.putBoolean("Climb Piston", climberPiston);
 		SmartDashboard.putNumber("Angle To Target", targetAngle);
+		SmartDashboard.putBoolean("Upper PhotoGatrak", upperPhotoGate.get());
 	}
 
 	@Override
