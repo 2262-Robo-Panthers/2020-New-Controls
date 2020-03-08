@@ -187,6 +187,7 @@ public class Robot extends TimedRobot {
 		//fr.getSensorCollection().setIntegratedSensorPosition(0, 0);
 		autoTimer.reset();
 		inPosition = false;
+		lightRing.set(false);
 	}
 
 	@Override
@@ -249,16 +250,15 @@ public class Robot extends TimedRobot {
 		intakeWantConveyor = false;
 		intakingParty = false;
 		flywheelMinSpeed = 0;
+		stopper.set(Value.kReverse);
+		lightRing.set(true);
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		hood.set(0);
 
 		final int LogiPOV = Logi.getPOV(0);
 		final int XDPad = XBoi.getPOV(0);
-
-		//stopper.set(shooting ? Value.kForward : Value.kReverse);
 
 		drive.arcadeDrive(XBoi.getTriggerAxis(Hand.kLeft) - XBoi.getTriggerAxis(Hand.kRight), -XBoi.getX(Hand.kLeft)/2);
 
@@ -296,11 +296,9 @@ public class Robot extends TimedRobot {
 
 		if (XBoi.getBumperPressed(Hand.kRight)) {
 			shift.set(true);
-			//stopper.set(Value.kForward);
 		}
 		if (XBoi.getBumperPressed(Hand.kLeft)){
 			shift.set(false);
-			//stopper.set(Value.kReverse);
 		}
 		if (LogiPOV == 90) intake.set(-0.5);
 		if (LogiPOV == 270) intake.set(0.5);
@@ -326,6 +324,7 @@ public class Robot extends TimedRobot {
 			//flywheelWantToShoot = false;
 			flywheelMinSpeed = 0;
 			ConveyorStop();
+			shooting = false;
 		}
 
 		if (Logi.getRawButtonPressed(8)) {
@@ -366,7 +365,7 @@ public class Robot extends TimedRobot {
 
 		// climb.set(XDPad == 0 && climbLimit.get() ? -0.5 : 0);
 
-		climb.set((Logi.getY() < -0.1 && Logi.getRawButton(7) && !climbLimit.get()) || (XBoi.getY(Hand.kRight) < -0.1 && !climbLimit.get()) ? 0 : -0.5);
+		climb.set((Logi.getY() < -0.1 && Logi.getRawButton(7) && climbLimit.get()) || (XBoi.getY(Hand.kRight) < -0.1 && climbLimit.get()) ? -0.5 : 0);
 
 		// if (otherPhotoGate.get()) intakeWantConveyor = false;
 		// if (frontPhotoGate.get()) {
@@ -400,7 +399,7 @@ public class Robot extends TimedRobot {
 		// // if (conveyorRequested && !intakeWantConveyor) ConveyorStart();
 		// else ConveyorStop();
 
-
+		if (XBoi.getX(Hand.kRight) > 0.1 || XBoi.getX(Hand.kRight) < -0.1) {hood.set(XBoi.getX(Hand.kRight));}
 
 		// if (frontPhotoGate.get()) {
 		// 	ConveyorIntake();
@@ -413,10 +412,11 @@ public class Robot extends TimedRobot {
 		// if (otherPhotoGate.get() && !intaking) ConveyorStop();
 
 
-		if (frontPhotoGate.get()) intakingParty = true;
+		if (frontPhotoGate.get() && rollerON) intakingParty = true;
 		if (intakingParty) Intaking();
 
 		if (flywheel.getEncoder().getVelocity() > 1000 && XBoi.getAButtonPressed()) {
+			stopper.set(Value.kForward);
 			ConveyorGo();
 			shooting = true;
 		}
@@ -425,9 +425,8 @@ public class Robot extends TimedRobot {
 			ConveyorStop();
 			shooting = false;
 			sawIt = false;
+			stopper.set(Value.kReverse);
 		}
-
-		stopper.set(shooting ? Value.kForward : Value.kReverse);
 
 		if (Logi.getRawButtonPressed(5)) rollerON = false;
 
@@ -435,15 +434,10 @@ public class Robot extends TimedRobot {
 
 		roller.set(rollerON ? -0.4 : 0);
 
-		//if (Logi.getRawButtonPressed(3)) stopper.set(Value.kForward);
-		//if (Logi.getRawButtonPressed(4)) stopper.set(Value.kReverse);
+		if (Logi.getRawButtonPressed(3)) stopper.set(Value.kForward);
+		if (Logi.getRawButtonPressed(4)) stopper.set(Value.kReverse);
 
-		/*
-		if (Logi.getRawButtonPressed(5)) hood.set(-1);
-		if (Logi.getRawButtonPressed(6)) hood.set(1);
-		*/
-
-        logiPOVWasDown = XDPad == 180;
+        logiPOVWasDown = LogiPOV == 180;
         logiPOVUpWasPressed = LogiPOV == 0;
 
 		SmartDashboard.putBoolean("RollerRunning", rollerON);
@@ -458,13 +452,16 @@ public class Robot extends TimedRobot {
 
 
 	private void Intaking() {
-		if (frontPhotoGate.get()) {
+		if (frontPhotoGate.get() && rollerON) {
 			ConveyorIntake();
 			intaking = true;
 		}
+		if (rollerON == false) {
+			intaking = false;
+		}
 		if (!frontPhotoGate.get() && intaking && !otherPhotoGate.get()) {
 			intaking = false;
-			ConveyorGo();
+			ConveyorSlow();
 		}
 		if (otherPhotoGate.get() && !intaking) {
 			ConveyorStop();
