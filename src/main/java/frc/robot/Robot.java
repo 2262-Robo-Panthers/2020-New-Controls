@@ -108,19 +108,30 @@ public class Robot extends TimedRobot {
 
 
 	/*
-	 * Left Joystick = Drive
+	 * ================
+	 * DRIVER CONTROLS
+	 * ================
+	 * Triggers = Drive Forward/Backward
+	 * Left Joystick = Turn
+	 * Right Joystick Up = Lift Pivot
+	 * Right Joystick Left/Right = Move Hood
 	 * Bumpers = Shifting
-	 * Triggers = Intake Pivot
-	 * A = Shoot 1 Ball
-	 * B = Flywheel Off
-	 * X = Intake Roller On
-	 * Y = Intake Roller Off
-	 * D-Pad Up = Auto Align
-	 * D-Pad Down = Climb Up
-	 * D-Pad Left = Close Shot
-	 * D-Pad Right = Far Shot
-	 * Start = Climb Piston Extend
-	 * Back = Climb Piston Retract
+	 * A = Shoot
+	 * Start/Back = Lift Piston
+	 *
+	 * ==================
+	 * OPERATOR CONTROLS
+	 * ==================
+	 * Joystick + Button 7 = Lift Pivot
+	 * Trigger = Flywheel Slow
+	 * Button 8 = Flywheel Yeet
+	 * Button 12 = Flywheel Very Slow (Testing only)
+	 * Thumb Button = Stop Flywheel
+	 * Button 5 = Stop Intake Roller
+	 * Button 6 = Start Intake Roller
+	 * POV Up/Down = Manual Conveyor
+	 * POV Right/Left = Intake Pivot
+	 *
 	 */
 
 	@Override
