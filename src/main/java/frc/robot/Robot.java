@@ -72,8 +72,6 @@ public class Robot extends TimedRobot {
 	final Timer initiationLineTimer = new Timer();
 	final Timer flywheelStarting = new Timer();
 
-	final PIDController flywheelPID = new PIDController(1, 0, 0);
-
 	double move;
 	boolean flywheelSpin;
 	double flywheelSpeed = 0.5;
@@ -127,8 +125,7 @@ public class Robot extends TimedRobot {
 	 * Button 8 = Flywheel Yeet
 	 * Button 12 = Flywheel Very Slow (Testing only)
 	 * Thumb Button = Stop Flywheel
-	 * Button 5 = Stop Intake Roller
-	 * Button 6 = Start Intake Roller
+	 * Button 5/6 = Toggle Intake Roller
 	 * POV Up/Down = Manual Conveyor
 	 * POV Right/Left = Intake Pivot
 	 *
@@ -149,8 +146,6 @@ public class Robot extends TimedRobot {
 		flywheel.getEncoder().setPosition(0);
 		flywheel.setIdleMode(IdleMode.kCoast);
 
-		flywheelPID.setSetpoint(1700);
-
 		air.start();
 		intake.setNeutralMode(NeutralMode.Brake);
 		climb.setIdleMode(IdleMode.kBrake);
@@ -165,22 +160,6 @@ public class Robot extends TimedRobot {
 	}
 
 	public void robotPeriodic() {
-
-		// switch (flywheelSetpoint) {
-		// 	case 0:
-		// 		flywheel.setVoltage(0);
-		// 		break;
-		// 	case 1:
-		// 		flywheel.setVoltage(flywheelPID.calculate(flywheel.getEncoder().getVelocity()) + 4);
-		// 		break;
-		// 	case 2:
-		// 		flywheel.setVoltage(12);
-		// 		break;
-		// 	default:
-		// 		flywheel.setVoltage(0);
-		// 		break;
-		// }
-
 		flywheelSpin = flywheel.get() != 0;
 		SmartDashboard.putNumber("RPM", flywheel.getEncoder().getVelocity());
 		SmartDashboard.putBoolean("Flywheel Running", flywheelSpin);
@@ -308,15 +287,11 @@ public class Robot extends TimedRobot {
 		// if (xRemote.getAButtonPressed()) rollerON = !rollerON;
 		// roller.set(rollerON ? 0.5 : 0);
 
-		if (XBoi.getBumperPressed(Hand.kRight)) {
-			shift.set(true);
-		}
-		if (XBoi.getBumperPressed(Hand.kLeft)){
-			shift.set(false);
-		}
+		if (XBoi.getBumperPressed(Hand.kRight)) shift.set(true);
+		if (XBoi.getBumperPressed(Hand.kLeft)) shift.set(false);
 		if (LogiPOV == 90) intake.set(-0.5);
 		if (LogiPOV == 270) intake.set(0.5);
-		if (LogiPOV != 90 && LogiPOV != 270) {intake.set(0);}
+		if (LogiPOV != 90 && LogiPOV != 270) intake.set(0);
 
 		if (LogiPOV == 180) ConveyorReverse();
 		else if (logiPOVWasDown) ConveyorStop();
@@ -413,7 +388,7 @@ public class Robot extends TimedRobot {
 		// // if (conveyorRequested && !intakeWantConveyor) ConveyorStart();
 		// else ConveyorStop();
 
-		if (XBoi.getX(Hand.kRight) > 0.1 || XBoi.getX(Hand.kRight) < -0.1) {hood.set(XBoi.getX(Hand.kRight));}
+		if (XBoi.getX(Hand.kRight) > 0.1 || XBoi.getX(Hand.kRight) < -0.1) hood.set(XBoi.getX(Hand.kRight));
 
 		// if (frontPhotoGate.get()) {
 		// 	ConveyorIntake();
@@ -464,24 +439,19 @@ public class Robot extends TimedRobot {
 	public void testPeriodic() {
 	}
 
-
 	private void Intaking() {
-		if (frontPhotoGate.get() && rollerON && otherPhotoGate.get() == false) {
+		if (frontPhotoGate.get() && rollerON && !otherPhotoGate.get()) {
 			ConveyorIntake();
 			intaking = true;
 			intakingTimer.reset();
 			intakingTimer.start();
 		}
-		if (rollerON == false || otherPhotoGate.get()) {
-			intaking = false;
-		}
+		if (!rollerON || otherPhotoGate.get()) intaking = false;
 		if (!frontPhotoGate.get() && intaking && intakingTimer.get() < 0.3) {
 			intaking = false;
 			ConveyorGo();
 		}
-		if (otherPhotoGate.get() == true) {
-			ConveyorStop();
-		}
+		if (otherPhotoGate.get()) ConveyorStop();
 		if (intakingTimer.get() > 0.3 && !intaking) {
 			ConveyorStop();
 			intakingParty = false;
