@@ -253,7 +253,7 @@ public class Robot extends TimedRobot {
 		final int LogiPOV = Logi.getPOV(0);
 		final int XDPad = XBoi.getPOV(0);
 
-		drive.arcadeDrive(XBoi.getTriggerAxis(Hand.kLeft) - XBoi.getTriggerAxis(Hand.kRight), -XBoi.getX(Hand.kLeft)/2);
+		drive.arcadeDrive(XBoi.getTriggerAxis(Hand.kLeft) - XBoi.getTriggerAxis(Hand.kRight), -XBoi.getX(Hand.kLeft)*0.75);
 
 		final double flywheelGetVel = flywheel.getEncoder().getVelocity();
 
